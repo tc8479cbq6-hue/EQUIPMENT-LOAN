@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Checkout Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .form-content {
+            padding: 40px;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .waiver-box {
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .waiver-box h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .waiver-box p {
+            margin-bottom: 12px;
+            color: #555;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .signature-pad-container {
+            margin-bottom: 25px;
+        }
+        
+        .signature-pad {
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            cursor: crosshair;
+            display: block;
+            background: white;
+            touch-action: none;
+        }
+        
+        .signature-controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-clear {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        
+        .btn-clear:hover {
+            background: #c82333;
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e0e0e0;
+            z-index: -1;
+        }
+        
+        .progress-step {
+            background: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .progress-step.active {
+            border-color: #667eea;
+            color: #667eea;
+            background: white;
+        }
+        
+        .progress-step.completed {
+            border-color: #28a745;
+            background: #28a745;
+            color: white;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .button-group .btn {
+            flex: 1;
+        }
+        
+        .success-message {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .success-message .icon {
+            font-size: 64px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        
+        .success-message h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .success-message p {
+            color: #6c757d;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Specialized Mechanical</h1>
+            <p>Equipment Loan Checkout</p>
+        </div>
+        
+        <div class="form-content">
+            <div class="progress-bar">
+                <div class="progress-step active" id="step1-indicator">1</div>
+                <div class="progress-step" id="step2-indicator">2</div>
+                <div class="progress-step" id="step3-indicator">3</div>
+            </div>
+            
+            <form id="checkoutForm">
+                <!-- Step 1: Basic Information -->
+                <div class="form-section active" id="step1">
+                    <h2 style="margin-bottom: 25px; color: #2c3e50;">Basic Information</h2>
+                    
+                    <div class="error-message" id="error1"></div>
+                    
+                    <div class="form-group">
+                        <label for="employeeName">Customer Name <span class="required">*</span></label>
+                        <input type="text" id="employeeName" autocomplete="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="employeeId">Service Address</label>
+                        <input type="text" id="employeeId" autocomplete="street-address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" autocomplete="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="equipment">Equipment/Tool <span class="required">*</span></label>
+                        <select id="equipment" required>
+                            <option value="">Select equipment...</option>
+                            <option value="Portable A/C Unit">Portable A/C Unit</option>
+                            <option value="Portable Heater">Portable Heater</option>
+                            <option value="Poly Cold Rental">Poly Cold Rental</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="equipmentId">Unit # (Located on Specialized Sticker) <span class="required">*</span></label>
+                        <input type="text" id="equipmentId" autocomplete="off" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="returnDate">Expected Return Date</label>
+                        <input type="date" id="returnDate" autocomplete="off">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Purpose/Notes</label>
+                        <textarea id="notes" autocomplete="off" placeholder="Briefly describe why you need this equipment..."></textarea>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary" onclick="nextStep(1)">Next: Review Waiver</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Waiver -->
+                <div class="form-section" id="step2">
+                    <h2 style="margin-bottom: 25px; color: #2c3e50;">Equipment Use Agreement</h2>
+                    
+                    <div class="error-message" id="error2"></div>
+                    
+                    <div class="waiver-box">
+                        <h3>Specialized Mechanical - Equipment Loan Agreement & Disclaimer</h3>
+                        <p><strong>Please read carefully before proceeding:</strong></p>
+                        
+                        <p>Specialized Mechanical is loaning you the following equipment for temporary use while HVAC repairs or installation are pending.</p>
+                        
+                        <h4 style="margin-top: 15px; margin-bottom: 10px; color: #2c3e50;">Terms of Use:</h4>
+                        
+                        <p><strong>1. Ownership:</strong> This equipment is being loaned at no charge as a courtesy and remains the property of Specialized Mechanical.</p>
+                        
+                        <p><strong>2. Safe Operation:</strong> The customer agrees to operate the equipment safely and in accordance with all manufacturer guidelines.</p>
+                        
+                        <p><strong>3. Usage Restrictions:</strong> The equipment is to be used indoors only, in a dry and stable environment. The customer shall not modify, relocate, or lend this equipment to any third party.</p>
+                        
+                        <p><strong>4. Liability Disclaimer:</strong> Specialized Mechanical is not responsible for any property damage, injury, or loss resulting from misuse, improper setup, or failure to follow operating instructions.</p>
+                        
+                        <p><strong>5. Customer Responsibility:</strong> The customer is responsible for the care and safekeeping of the unit. Any damage beyond normal wear or failure to return the unit will result in charges for repair or replacement (minimum replacement fee: $400 per unit).</p>
+                        
+                        <p><strong>6. Return Policy:</strong> All equipment must be returned in working condition upon completion of HVAC services or upon request.</p>
+                        
+                        <h4 style="margin-top: 15px; margin-bottom: 10px; color: #2c3e50;">Acknowledgement:</h4>
+                        <p>By checking the box below and signing, I acknowledge that I have received the above equipment, understand the terms of this agreement, and accept full responsibility for its use and return.</p>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="agreeWaiver" required>
+                        <label for="agreeWaiver">I acknowledge that I have received the above equipment, understand the terms of this agreement, and accept full responsibility for its use and return <span class="required">*</span></label>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next: Sign</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Signature -->
+                <div class="form-section" id="step3">
+                    <h2 style="margin-bottom: 25px; color: #2c3e50;">Signature</h2>
+                    
+                    <div class="error-message" id="error3"></div>
+                    
+                    <p style="margin-bottom: 20px; color: #6c757d;">Please sign below to confirm your agreement and checkout the equipment:</p>
+                    
+                    <div class="signature-pad-container">
+                        <label>Your Signature <span class="required">*</span></label>
+                        <canvas id="signaturePad" class="signature-pad" width="620" height="200"></canvas>
+                        <div class="signature-controls">
+                            <button type="button" class="btn btn-clear" onclick="clearSignature()">Clear Signature</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="printName">Print Name <span class="required">*</span></label>
+                        <input type="text" id="printName" autocomplete="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signatureDate">Date <span class="required">*</span></label>
+                        <input type="date" id="signatureDate" autocomplete="off" required readonly>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(3)">Back</button>
+                        <button type="submit" class="btn btn-primary">Submit Checkout</button>
+                    </div>
+                </div>
+                
+                <!-- Success Message -->
+                <div class="form-section" id="success">
+                    <div class="success-message">
+                        <div class="icon">✓</div>
+                        <h2>Checkout Complete!</h2>
+                        <p>Your equipment checkout has been recorded.</p>
+                        <p style="margin-top: 20px;">Please remember to return the equipment by <strong id="returnDateDisplay"></strong></p>
+                        <button type="button" class="btn btn-primary" onclick="resetForm()" style="margin-top: 30px;">Checkout Another Item</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Signature pad functionality
+        const canvas = document.getElementById('signaturePad');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let hasSignature = false;
+        
+        // Auto-populate equipment and unit # from URL parameters
+        // Set today's date on signature
+        window.addEventListener('DOMContentLoaded', function() {
+            // Set today's date
+            document.getElementById('signatureDate').valueAsDate = new Date();
+            
+            const params = new URLSearchParams(window.location.search);
+            
+            // Auto-fill equipment type if provided in URL
+            if (params.get('equipment')) {
+                const equipment = params.get('equipment');
+                document.getElementById('equipment').value = equipment;
+            }
+            
+            // Auto-fill unit # if provided in URL
+            if (params.get('id')) {
+                const unitId = params.get('id');
+                document.getElementById('equipmentId').value = unitId;
+            }
+        });
+        
+        // Touch and mouse events for signature
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            hasSignature = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#000';
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                             e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+        }
+        
+        // Form navigation
+        let currentStep = 1;
+        
+        function nextStep(step) {
+            // Validate current step
+            if (step === 1) {
+                const requiredFields = ['employeeName', 'email', 'equipment', 'equipmentId'];
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!document.getElementById(field).value) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    showError('error1', 'Please fill in all required fields');
+                    return;
+                }
+                hideError('error1');
+            }
+            
+            if (step === 2) {
+                if (!document.getElementById('agreeWaiver').checked) {
+                    showError('error2', 'You must agree to the terms and conditions to proceed');
+                    return;
+                }
+                hideError('error2');
+            }
+            
+            // Move to next step
+            document.getElementById('step' + step).classList.remove('active');
+            document.getElementById('step' + (step + 1)).classList.add('active');
+            
+            // Update progress
+            document.getElementById('step' + step + '-indicator').classList.remove('active');
+            document.getElementById('step' + step + '-indicator').classList.add('completed');
+            document.getElementById('step' + (step + 1) + '-indicator').classList.add('active');
+            
+            currentStep = step + 1;
+            window.scrollTo(0, 0);
+        }
+        
+        function prevStep(step) {
+            document.getElementById('step' + step).classList.remove('active');
+            document.getElementById('step' + (step - 1)).classList.add('active');
+            
+            // Update progress
+            document.getElementById('step' + step + '-indicator').classList.remove('active');
+            document.getElementById('step' + (step - 1) + '-indicator').classList.remove('completed');
+            document.getElementById('step' + (step - 1) + '-indicator').classList.add('active');
+            
+            currentStep = step - 1;
+            window.scrollTo(0, 0);
+        }
+        
+        function showError(elementId, message) {
+            const errorDiv = document.getElementById(elementId);
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function hideError(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+        
+        // Form submission
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate signature
+            if (!hasSignature) {
+                showError('error3', 'Please provide your signature');
+                return;
+            }
+            
+            if (!document.getElementById('printName').value) {
+                showError('error3', 'Please print your name');
+                return;
+            }
+            
+            hideError('error3');
+            
+            // Get signature as base64 image
+            const signatureData = canvas.toDataURL();
+            
+            // Collect all form data
+            const formData = {
+                employeeName: document.getElementById('employeeName').value,
+                employeeId: document.getElementById('employeeId').value,
+                email: document.getElementById('email').value,
+                equipment: document.getElementById('equipment').value,
+                equipmentId: document.getElementById('equipmentId').value,
+                returnDate: document.getElementById('returnDate').value,
+                notes: document.getElementById('notes').value,
+                agreedToWaiver: document.getElementById('agreeWaiver').checked,
+                printName: document.getElementById('printName').value,
+                signatureDate: document.getElementById('signatureDate').value,
+                signature: signatureData,
+                timestamp: new Date().toISOString(),
+                forceCheckout: false  // Default to not forcing
+            };
+            
+            // Submit the form
+            submitCheckout(formData);
+        });
+        
+        function submitCheckout(formData) {
+            // ========================================================================
+            // ⚠️ IMPORTANT: CONFIGURE GOOGLE SHEETS CONNECTION HERE ⚠️
+            // ========================================================================
+            // 
+            // TO SAVE DATA TO GOOGLE SHEETS:
+            // 1. Deploy the google-apps-script.js file as a Web App
+            // 2. Copy the Web App URL you receive
+            // 3. Uncomment the fetch code below (remove /* and */)
+            // 4. Replace 'YOUR_GOOGLE_APPS_SCRIPT_URL' with your actual URL
+            //
+            // Example URL: https://script.google.com/macros/s/AKfycbxXXXXXXXX/exec
+            // 
+            // ========================================================================
+            
+            console.log('Form Data:', formData);
+            
+            // UNCOMMENT THE LINES BELOW AND ADD YOUR URL:
+            
+            /*
+            fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'warning') {
+                    // Unit is already checked out - show confirmation dialog
+                    const confirmMessage = `⚠️ WARNING\n\n` +
+                        `Unit ${result.unitNumber} is currently checked out to:\n` +
+                        `${result.existingCustomer}\n\n` +
+                        `Are you sure you want to check it out again?\n` +
+                        `This will override the previous checkout.`;
+                    
+                    if (confirm(confirmMessage)) {
+                        // User confirmed - force the checkout
+                        formData.forceCheckout = true;
+                        submitCheckout(formData);
+                    } else {
+                        // User cancelled - show message and stay on form
+                        showError('error3', 'Checkout cancelled. Please check in the unit first or use a different unit.');
+                    }
+                } else if (result.status === 'success') {
+                    // Success - show success screen
+                    document.getElementById('step3').classList.remove('active');
+                    document.getElementById('success').classList.add('active');
+                    document.getElementById('returnDateDisplay').textContent = formData.returnDate || 'N/A';
+                    
+                    document.getElementById('step3-indicator').classList.remove('active');
+                    document.getElementById('step3-indicator').classList.add('completed');
+                } else {
+                    // Error
+                    showError('error3', 'Error: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Submission error:', error);
+                showError('error3', 'Error submitting form. Please try again.');
+            });
+            */
+            
+            // ========================================================================
+            
+            // Temporary - remove these lines when you uncomment the fetch above
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('success').classList.add('active');
+            document.getElementById('returnDateDisplay').textContent = formData.returnDate || 'N/A';
+            
+            document.getElementById('step3-indicator').classList.remove('active');
+            document.getElementById('step3-indicator').classList.add('completed');
+        });
+        
+        function resetForm() {
+            document.getElementById('checkoutForm').reset();
+            clearSignature();
+            document.getElementById('success').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            
+            // Reset progress indicators
+            document.getElementById('step1-indicator').className = 'progress-step active';
+            document.getElementById('step2-indicator').className = 'progress-step';
+            document.getElementById('step3-indicator').className = 'progress-step';
+            
+            document.getElementById('signatureDate').valueAsDate = new Date();
+            currentStep = 1;
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
